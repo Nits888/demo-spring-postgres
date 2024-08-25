@@ -1,26 +1,34 @@
-public List<ProjectRequestResponseDto> getAllProjectDetails() {
-    var allProjectDetails = projectRepository.findAll();
-    return allProjectDetails.stream()
-                            .map(this::buildProjectResponse)
-                            .collect(Collectors.toList());
-}
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@GetMapping("/projects")
-public ResponseEntity<List<ProjectRequestResponseDto>> getAllProjectDetails() {
-    var allDetails = service.getAllProjectDetails();
-    if (allDetails.isEmpty()) {
-        throw new ResourceNotFoundException("No project details found");
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class ProjectService {
+
+    private final ProjectRepository projectRepository;
+
+    public ProjectService(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
     }
-    return new ResponseEntity<>(allDetails, HttpStatus.OK);
-}
 
+    @Transactional
+    public List<ProjectRequestResponseDto> updateMultipleProjectDetails(List<ProjectRequestResponseDto> requestDtos) {
+        List<ProjectRequestResponseDto> responses = new ArrayList<>();
 
-@PatchMapping("/projects")
-public ResponseEntity<List<ProjectRequestResponseDto>> updateMultipleProjectDetails(@RequestBody List<ProjectRequestResponseDto> requestDtos) {
-    List<ProjectRequestResponseDto> responses = new ArrayList<>();
-    for (ProjectRequestResponseDto requestDto : requestDtos) {
-        var response = service.updateProjectDetails(requestDto);
-        responses.add(response);
+        for (ProjectRequestResponseDto requestDto : requestDtos) {
+            var response = updateProjectDetails(requestDto);
+            responses.add(response);
+        }
+
+        return responses;
     }
-    return new ResponseEntity<>(responses, HttpStatus.OK);
+
+    public ProjectRequestResponseDto updateProjectDetails(ProjectRequestResponseDto requestDto) {
+        // Logic to update a single project detail
+        // This method should throw an exception if an update fails
+        // e.g., validation failure, or some other business logic failure
+        return null; // replace with actual implementation
+    }
 }
